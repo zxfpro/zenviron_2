@@ -48,6 +48,14 @@ npx skills add <repo-url> --skill monorepo
 npx skills add <repo-url> --skill sql-docker
 ```
 
+Published skills are defined under:
+
+```text
+skills/<skill-name>/SKILL.md
+```
+
+`SKILL.md` must include YAML frontmatter with `name` and `description`.
+
 ## Template Contract
 
 Every template lives in a single folder:
@@ -133,4 +141,4 @@ Per-skill installation:
 npx skills add <repo-url> --skill <template-name>
 ```
 
-As long as `template/<name>/SKILL.md` exists and the repo is accessible, agents can install and use that skill.
+As long as `skills/<name>/SKILL.md` exists (with valid frontmatter) and the repo is accessible, skills can be discovered and installed.
