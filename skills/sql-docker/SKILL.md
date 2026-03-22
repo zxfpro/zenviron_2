@@ -5,7 +5,7 @@ description: Set up a local PostgreSQL development service quickly with Docker C
 
 # sql-docker
 
-Use this skill to bootstrap and run a local PostgreSQL service from `template/sql-docker/skeleton`.
+Use this skill to bootstrap and run a local PostgreSQL service from the bundled local resources in `resources/skeleton`.
 
 ## When to use
 
@@ -15,10 +15,10 @@ Use this skill to bootstrap and run a local PostgreSQL service from `template/sq
 
 ## Instructions
 
-1. If `zenviron` is already installed, run:
-   - `zenviron init "<project_name>" --template sql-docker`
-2. If `zenviron` is not available, run one-off without local installation:
-   - `uvx --from git+https://github.com/zxfpro/zenviron_2 zenviron init "<project_name>" --template sql-docker`
+1. Resolve this skill folder path (`$SKILL_DIR`):
+   - Typical install path: `~/.agents/skills/sql-docker`
+2. Copy bundled template resources to your project:
+   - `cp -R "$SKILL_DIR/resources/skeleton" "<target-project-dir>"`
 3. In the generated project, copy `.env.example` to `.env`.
 4. Start the service: `docker compose -f docker-compose.sql.yml up -d`.
 5. Verify status: `docker compose -f docker-compose.sql.yml ps`.

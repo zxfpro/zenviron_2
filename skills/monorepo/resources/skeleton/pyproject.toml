@@ -1,0 +1,12 @@
+[project]
+name = "{{ REPO_SLUG }}"
+version = "0.1.0"
+description = "AI-ready monorepo project"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "pytest>=8.0.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

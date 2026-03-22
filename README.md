@@ -55,6 +55,11 @@ skills/<skill-name>/SKILL.md
 ```
 
 `SKILL.md` must include YAML frontmatter with `name` and `description`.
+If a skill needs local static assets after installation, include them under:
+
+```text
+skills/<skill-name>/resources/
+```
 
 ## Template Contract
 
