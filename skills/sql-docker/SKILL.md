@@ -1,9 +1,12 @@
 ---
 name: sql-docker
 description: Set up a local PostgreSQL development service quickly with Docker Compose.
+version: 0.2.1
 ---
 
 # sql-docker
+
+Skill Version: `0.2.1`
 
 Use this skill to bootstrap and run a local PostgreSQL service from the bundled local resources in `resources/skeleton`.
 

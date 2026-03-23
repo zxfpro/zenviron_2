@@ -1,9 +1,12 @@
 ---
 name: monorepo
 description: Bootstrap an AI-ready monorepo project using Zenviron's monorepo template.
+version: 0.2.1
 ---
 
 # monorepo
+
+Skill Version: `0.2.1`
 
 Use this skill to initialize a new AI-ready monorepo from the bundled local resources in `resources/skeleton`.
 
