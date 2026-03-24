@@ -1,0 +1,112 @@
+# 部署时忽略的文件
+# 这些文件在部署到生产服务器时不需要上传
+
+# Git 相关
+.git/
+.gitignore
+.gitattributes
+
+# IDE 配置文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# Python 相关（会在服务器上重新安装）
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# 虚拟环境
+venv/
+ENV/
+env/
+.venv
+
+# 环境变量文件（服务器上需要创建自己的 .env）
+.env
+.env.local
+.env.*.local
+
+# 日志文件（服务器上会重新生成）
+logs/
+*.log
+
+# 备份文件（服务器上会重新生成）
+backups/
+*.sql
+*.sql.gz
+*.dump
+
+# SSL 证书（生产服务器应该使用自己的证书）
+ssl/*.pem
+ssl/*.key
+ssl/*.crt
+!ssl/README.md
+
+# 文档文件（可选，通常不需要）
+docs/
+*.md
+!README.md
+PRODUCTION_READINESS.md
+
+# 开发脚本（部分脚本可能有用，但测试脚本不需要）
+scripts/test_api.sh
+scripts/quick_start.sh
+scripts/generate-ssl-cert.sh
+scripts/generate-ssl-cert.ps1
+
+# 临时文件
+*.tmp
+*.bak
+*.cache
+.DS_Store
+Thumbs.db
+
+# Docker 开发文件（生产环境通常不需要）
+docker-compose.backup.yml
+.dockerignore
+
+# 数据库迁移文件（如果使用 Alembic，可能需要）
+# migrations/  # 根据实际情况决定是否保留
+
+# Makefile（通常用于开发）
+Makefile
+
+# 监控数据（服务器上会重新生成）
+monitoring/grafana/dashboards/*.json  # Grafana 会自动生成
+
+# 测试文件
+test/
+tests/
+*_test.py
+test_*.py
+

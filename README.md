@@ -153,11 +153,11 @@ As long as `skills/<name>/SKILL.md` exists (with valid frontmatter) and the repo
 Each published skill includes:
 
 - `skills/<name>/SKILL.md` frontmatter field: `version`
-- `skills/<name>/VERSION` plain text file
+- `skills/<name>/VERSION.md` markdown version file
 
 After installing, verify local installed version:
 
 ```bash
-cat ~/.agents/skills/monorepo/VERSION
-cat ~/.agents/skills/sql-docker/VERSION
+cat ~/.agents/skills/monorepo/VERSION.md
+cat ~/.agents/skills/sql-docker/VERSION.md
 ```

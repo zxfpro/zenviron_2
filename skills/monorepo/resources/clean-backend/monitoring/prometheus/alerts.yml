@@ -1,0 +1,113 @@
+# Prometheus 告警规则
+
+groups:
+  - name: tool_server_alerts
+    interval: 30s
+    rules:
+      # 服务可用性告警
+      - alert: ServiceDown
+        expr: up{job="tool-server"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: tool-server
+        annotations:
+          summary: "服务 {{ $labels.instance }} 不可用"
+          description: "Tool Server 服务已下线超过 1 分钟"
+
+      # HTTP 错误率告警
+      - alert: HighErrorRate
+        expr: |
+          (
+            sum(rate(http_requests_total{job="tool-server",status=~"5.."}[5m]))
+            /
+            sum(rate(http_requests_total{job="tool-server"}[5m]))
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          service: tool-server
+        annotations:
+          summary: "HTTP 错误率过高"
+          description: "Tool Server HTTP 5xx 错误率超过 5%，当前值: {{ $value | humanizePercentage }}"
+
+      # 响应时间告警
+      - alert: HighResponseTime
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(http_request_duration_seconds_bucket{job="tool-server"}[5m])) by (le)
+          ) > 2.0
+        for: 10m
+        labels:
+          severity: warning
+          service: tool-server
+        annotations:
+          summary: "响应时间过高"
+          description: "Tool Server 95% 分位响应时间超过 2 秒，当前值: {{ $value }}s"
+
+      # 慢请求告警
+      - alert: SlowRequests
+        expr: |
+          histogram_quantile(0.99,
+            sum(rate(http_request_duration_seconds_bucket{job="tool-server"}[5m])) by (le)
+          ) > 5.0
+        for: 5m
+        labels:
+          severity: warning
+          service: tool-server
+        annotations:
+          summary: "慢请求过多"
+          description: "Tool Server 99% 分位响应时间超过 5 秒，当前值: {{ $value }}s"
+
+      # 请求量激增告警
+      - alert: HighRequestRate
+        expr: |
+          sum(rate(http_requests_total{job="tool-server"}[5m])) > 100
+        for: 5m
+        labels:
+          severity: info
+          service: tool-server
+        annotations:
+          summary: "请求量激增"
+          description: "Tool Server 请求速率超过 100 req/s，当前值: {{ $value }} req/s"
+
+  - name: infrastructure_alerts
+    interval: 30s
+    rules:
+      # 内存使用告警
+      - alert: HighMemoryUsage
+        expr: |
+          (container_memory_usage_bytes{name="tool-server-app"} / container_spec_memory_limit_bytes{name="tool-server-app"}) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          service: tool-server
+        annotations:
+          summary: "内存使用率过高"
+          description: "应用内存使用率超过 90%，当前值: {{ $value | humanizePercentage }}"
+
+      # CPU 使用告警
+      - alert: HighCPUUsage
+        expr: |
+          rate(container_cpu_usage_seconds_total{name="tool-server-app"}[5m]) > 0.8
+        for: 10m
+        labels:
+          severity: warning
+          service: tool-server
+        annotations:
+          summary: "CPU 使用率过高"
+          description: "应用 CPU 使用率超过 80%，当前值: {{ $value | humanizePercentage }}"
+
+  - name: database_alerts
+    interval: 30s
+    rules:
+      # 数据库连接数告警（需要 postgres_exporter）
+      # - alert: HighDatabaseConnections
+      #   expr: pg_stat_database_numbackends{datname="tool_server"} > 80
+      #   for: 5m
+      #   labels:
+      #     severity: warning
+      #   annotations:
+      #     summary: "数据库连接数过高"
+      #     description: "PostgreSQL 连接数超过 80，当前值: {{ $value }}"
+

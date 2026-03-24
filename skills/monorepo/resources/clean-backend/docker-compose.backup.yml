@@ -1,0 +1,38 @@
+# 数据库备份服务配置（可选）
+# 使用: docker-compose -f docker-compose.yml -f docker-compose.backup.yml up -d backup-scheduler
+
+version: '3.8'
+
+services:
+  # 数据库备份调度器（使用 cron）
+  backup-scheduler:
+    image: alpine:latest
+    container_name: tool-server-backup-scheduler
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    volumes:
+      - ./scripts:/scripts:ro
+      - ./backups:/backups
+      - ./env.example:/app/.env:ro  # 如果需要环境变量
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres_password}
+      DB_NAME: ${DB_NAME:-tool_server}
+      BACKUP_SCHEDULE: ${BACKUP_SCHEDULE:-0 2 * * *}  # 默认每天凌晨 2 点
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-7}
+    networks:
+      - tool-network
+    command: >
+      sh -c "
+        apk add --no-cache dcron postgresql-client &&
+        echo '$${BACKUP_SCHEDULE} /scripts/backup_db.sh /backups $${BACKUP_RETENTION_DAYS} >> /backups/backup.log 2>&1' > /etc/crontabs/root &&
+        crond -f -l 2
+      "
+
+networks:
+  tool-network:
+    external: true
+
