@@ -1,12 +1,12 @@
 ---
 name: monorepo
 description: Bootstrap an AI-ready monorepo project using Zenviron's monorepo template.
-version: 0.2.4
+version: 0.2.5
 ---
 
 # monorepo
 
-Skill Version: `0.2.4`
+Skill Version: `0.2.5`
 
 Use this skill to initialize a new AI-ready monorepo from bundled local resources.
 
@@ -24,20 +24,20 @@ Use this skill to initialize a new AI-ready monorepo from bundled local resource
    - Confirm template mode:
      - `skeleton` (default monorepo scaffold)
      - `clean-backend` (backend-focused scaffold)
-2. Preflight self-check must run through shell script:
-   - `bash "$SKILL_DIR/resources/scripts/preflight_check.sh"`
-3. If the script fails, stop and require the user to complete `gh` authentication before continuing.
-4. Resolve this skill folder path (`$SKILL_DIR`) and use fixed target base:
+2. Resolve this skill folder path (`$SKILL_DIR`) and use fixed target base:
    - Typical install path: `~/.agents/skills/monorepo`
    - `TARGET_DIR="$HOME/GitHub"`
    - `PROJECT_NAME="<project-name>"`
    - `MODE="<skeleton|clean-backend>"`
-5. Create the project under `~/GitHub`:
+3. Create the project under `~/GitHub`:
    - `mkdir -p "$TARGET_DIR"`
    - `cp -R "$SKILL_DIR/resources/$MODE" "$TARGET_DIR/$PROJECT_NAME"`
-6. Render placeholders in text files:
+4. Initialize git repository:
+   - `cd "$TARGET_DIR/$PROJECT_NAME"`
+   - `git init`
+5. Render placeholders in text files:
    - `PROJECT_NAME` => display name
    - `MODULE_NAME` => snake_case name
    - `REPO_SLUG` => kebab-case name
-7. Ensure generated files include `.zenviron-state.json` (create it if your workflow expects Zenviron state tracking).
-8. Confirm placeholders are fully rendered with no `{{ ... }}` left.
+6. Ensure generated files include `.zenviron-state.json` (create it if your workflow expects Zenviron state tracking).
+7. Confirm placeholders are fully rendered with no `{{ ... }}` left.

@@ -37,4 +37,4 @@ cat ~/.agents/skills/monorepo/VERSION.md
 cat ~/.agents/skills/sql-docker/VERSION.md
 ```
 
-Expected current version: `0.2.4`
+Expected current version: `0.2.5`
