@@ -1,14 +1,14 @@
 ---
 name: monorepo
 description: Bootstrap an AI-ready monorepo project using Zenviron's monorepo template.
-version: 0.2.2
+version: 0.2.4
 ---
 
 # monorepo
 
-Skill Version: `0.2.2`
+Skill Version: `0.2.4`
 
-Use this skill to initialize a new AI-ready monorepo from the bundled local resources in `resources/skeleton`.
+Use this skill to initialize a new AI-ready monorepo from bundled local resources.
 
 ## When to use
 
@@ -21,17 +21,20 @@ Use this skill to initialize a new AI-ready monorepo from the bundled local reso
 1. Preflight confirmation (must ask user before generation):
    - Confirm target base directory is `~/GitHub` (default, unless user explicitly changes it).
    - Confirm repository name (example: `foodmenu`).
-   - Confirm GitHub auth readiness with `gh auth status`.
-2. Preflight self-check commands (run automatically when possible):
-   - `gh auth status`
-3. If `gh auth status` fails, stop and require the user to complete `gh` authentication before continuing.
+   - Confirm template mode:
+     - `skeleton` (default monorepo scaffold)
+     - `clean-backend` (backend-focused scaffold)
+2. Preflight self-check must run through shell script:
+   - `bash "$SKILL_DIR/resources/scripts/preflight_check.sh"`
+3. If the script fails, stop and require the user to complete `gh` authentication before continuing.
 4. Resolve this skill folder path (`$SKILL_DIR`) and use fixed target base:
    - Typical install path: `~/.agents/skills/monorepo`
    - `TARGET_DIR="$HOME/GitHub"`
    - `PROJECT_NAME="<project-name>"`
+   - `MODE="<skeleton|clean-backend>"`
 5. Create the project under `~/GitHub`:
    - `mkdir -p "$TARGET_DIR"`
-   - `cp -R "$SKILL_DIR/resources/skeleton" "$TARGET_DIR/$PROJECT_NAME"`
+   - `cp -R "$SKILL_DIR/resources/$MODE" "$TARGET_DIR/$PROJECT_NAME"`
 6. Render placeholders in text files:
    - `PROJECT_NAME` => display name
    - `MODULE_NAME` => snake_case name
