@@ -4,42 +4,49 @@
 
 .
 ├── AGENTS.md // 指导文件
-├── CHANGELOG.md // 项目更新日志
 ├── Dockerfile
-├── README.md // 项目概述
-├── deploy // 部署相关内容 nginx docker-compose 等文件
-│   ├── docker-compose.test.yml
-│   ├── docker-compose.prod.yml
-│   ├── Readme.md
-├── docs
-│   ├── connectivity // 相关资源, 外部账户, 账号等 (数据库, 服务器, 大模型)
-│   │   ├── Readme.md
-│   │   ├── database-config.md
-│   │   └── embedding-function.md
-│   ├── plans // 开发计划存放位置 
-│   └── project-progress // 项目推进过程文档
-│       ├── 00-original_demand.md
-│       ├── 01-PRD // PRD文档, 版本采用瀑布流模式
-│       ├── 02-LLD // LLD文档, 版本采用瀑布流模式 与PRD对齐
-│       ├── GANTT.md // 项目进度跟踪与管理-甘特图
-│       ├── PROGRESS_DETAILS.md // 项目进度细节记录
-│       └── Readme.md
-├── .env // 项目环境变量
-├── apps
-│   ├── frontend // 前端代码
-│   │   ├── src //前端源码
-│   ├── backend // 后端代码
-│   │   ├── src //后端源码
-├── node_modules // 前端环境
-├── packages
-│   ├── shared-types // 前后端共享信息, 结构
-├── scripts // 小规模代码功能实验, 运行脚本
-│   ├── Readme.md
-│   └── notebook // ipynb 文档,笔记本, 人机交互
-├── pyproject.toml // python环境管理 uv 配置
+├── Makefile
+├── README.md
+├── app
+│   ├── __init__.py
+│   ├── api // 接口定义
+│   │   ├── __init__.py
+│   │   ├── health.py
+│   │   └── readme.md
+│   ├── config.py
+│   ├── extensions.py
+│   ├── models // 数据库
+│   │   ├── __init__.py
+│   │   └── readme.md
+│   ├── schemas // 数据结构
+│   │   ├── __init__.py
+│   │   └── readme.md
+│   ├── security // 鉴权
+│   │   ├── readme.md
+│   │   └── token_auth.py
+│   ├── services // 业务实现
+│   │   ├── __init__.py
+│   │   └── readme.md
+│   └── utils
+│       ├── __init__.py
+│       ├── datetime_utils.py
+│       ├── exceptions.py
+│       ├── logging_config.py
+│       ├── metrics.py
+│       ├── rate_limit.py
+│       ├── redis_client.py
+│       └── response.py
+├── docker-compose.backup.yml
+├── docker-compose.yml
+├── env.example
+├── gunicorn_config.py
+├── main.py
+├── requirements.txt
+├── scripts
+│   └── init_db_mysql.py
 ├── tests // 测试位置
-│   └── static // 测试用例数据
-└── uv.lock
+├── uvicorn_config.py
+└── wsgi.py
 
 
 ## 开发工作流

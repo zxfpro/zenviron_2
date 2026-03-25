@@ -61,6 +61,25 @@ If a skill needs local static assets after installation, include them under:
 skills/<skill-name>/resources/
 ```
 
+For module-based reuse, use:
+
+- `skills/module-factory` to scaffold new `module-<name>` skills
+- `skills/module-<name>/resources/module/*` as reusable payload
+
+Module skill target layout:
+
+```text
+skills/module-<slug>/
+├── SKILL.md
+├── VERSION.md
+└── resources/
+    ├── module/
+    ├── spec/
+    │   ├── INTEGRATION.md
+    │   └── USAGE.md
+    └── scripts/
+```
+
 ## Template Contract
 
 Every template lives in a single folder:

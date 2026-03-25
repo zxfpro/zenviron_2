@@ -1,0 +1,25 @@
+name = "module-name"
+version = "0.1.0"
+owner = "team-name"
+description = "Reusable full-stack feature module"
+
+[compatibility]
+project_types = ["monorepo"]
+backend = ["python-flask", "node-express"]
+frontend = ["nextjs", "react"]
+database = ["mysql", "postgresql"]
+
+[requirements]
+env = ["DATABASE_URL", "JWT_SECRET"]
+services = ["redis"]
+
+[integration]
+entrypoints = [
+  "backend: register routes in app bootstrap",
+  "frontend: mount page/component route",
+  "database: run migration scripts",
+]
+
+[migrations]
+order = ["001_init.sql", "002_indexes.sql"]
+rollback = "down.sql"

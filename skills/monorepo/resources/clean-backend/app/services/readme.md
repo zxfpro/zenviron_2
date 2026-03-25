@@ -1,6 +1,8 @@
-"""
-工具CRUD服务（FastAPI 版本）
-"""
+这里具体存放 结构业务逻辑的实现
+具体参考如下
+
+```python
+
 import json
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
@@ -283,3 +285,6 @@ class ToolService:
         
         return tools, total
 
+
+
+```

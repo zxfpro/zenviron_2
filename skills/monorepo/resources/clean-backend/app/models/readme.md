@@ -1,6 +1,10 @@
-"""
-工具模型
-"""
+
+这里负责定义数据库ORM 
+
+
+
+```python
+
 from sqlalchemy import Column, Integer, String, JSON, Enum, DateTime, Index
 from sqlalchemy.orm import relationship
 from app.extensions import Base
@@ -96,3 +100,6 @@ class Tool(Base):
     def __repr__(self):
         return f'<Tool {self.id}: {self.name} ({self.status})>'
 
+
+
+```
