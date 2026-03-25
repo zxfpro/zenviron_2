@@ -1,0 +1,25 @@
+name = "module-login-m"
+version = "1.0.0"
+owner = "login_m team"
+description = "Reusable login module with email and phone auth"
+
+[compatibility]
+project_types = ["monorepo"]
+backend = ["python-fastapi"]
+frontend = ["static-html", "react-compatible"]
+database = ["mysql"]
+
+[requirements]
+env = ["JWT_SECRET", "DATABASE_URL", "SMTP_USER", "SMTP_PASS", "SMTP_FROM"]
+services = ["mysql"]
+
+[integration]
+entrypoints = [
+  "backend: include auth routes and startup DB init",
+  "frontend: host static login pages and route /api proxy",
+  "database: provision mysql schema and persistent volume"
+]
+
+[migrations]
+order = []
+rollback = "restore previous image + compose"

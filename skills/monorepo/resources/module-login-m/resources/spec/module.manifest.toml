@@ -1,0 +1,6 @@
+name = "module-login-m"
+version = "1.0.0"
+status = "ready"
+
+author = "login_m team"
+summary = "Reusable auth module package"

@@ -1,0 +1,70 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: login-m-mysql-test
+    restart: unless-stopped
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_DATABASE: "login_m"
+    ports:
+      - "13306:3306"
+    volumes:
+      - login-m-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p1234 --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    networks:
+      - login-m-net
+
+  login-m-api-test:
+    image: login-m:test
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: login-m-api-test
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "18000:8000"
+    environment:
+      JWT_SECRET: "change-this-in-test-server-min-32-bytes"
+      JWT_EXP_MINUTES: "60"
+      DATABASE_URL: "mysql+pymysql://root:1234@mysql:3306/login_m?charset=utf8mb4"
+      CODE_TTL_MINUTES: "10"
+      USE_FAKE_SMTP: "false"
+      SMTP_HOST: "smtp.qq.com"
+      SMTP_PORT: "465"
+      SMTP_SSL: "true"
+      SMTP_USER: "${SMTP_USER}"
+      SMTP_PASS: "${SMTP_PASS}"
+      SMTP_FROM: "${SMTP_FROM}"
+    networks:
+      - login-m-net
+
+  login-m-web-test:
+    image: login-m-web:test
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.frontend
+    container_name: login-m-web-test
+    restart: unless-stopped
+    depends_on:
+      - login-m-api-test
+    ports:
+      - "18100:80"
+    networks:
+      - login-m-net
+
+volumes:
+  login-m-mysql-data:
+
+networks:
+  login-m-net:
+    driver: bridge
