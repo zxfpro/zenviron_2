@@ -1,0 +1,20 @@
+[project]
+name = "kanban-m"
+version = "0.1.0"
+description = "AI-ready monorepo project"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "fastapi>=0.135.2",
+  "httpx>=0.28.1",
+  "pydantic-settings>=2.13.1",
+  "pymysql>=1.1.2",
+  "pytest>=8.0.0",
+  "python-dotenv>=1.2.2",
+  "sqlmodel>=0.0.37",
+  "uvicorn>=0.42.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["apps/backend/src"]

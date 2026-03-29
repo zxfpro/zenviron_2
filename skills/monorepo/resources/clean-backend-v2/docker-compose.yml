@@ -1,0 +1,84 @@
+# 本地:
+# docker compose -f deploy/docker-compose.yml up -d --build mysql test nginx
+# 远端 context:
+# docker --context postpin-server compose -f deploy/docker-compose.yml up -d --build mysql test nginx
+
+services:
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: host
+    image: ps-plugin-backend:test
+    container_name: test
+    ports:
+      - "9888:9888"
+    volumes:
+      - ./data:/app/data
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-sqlite:////app/data/test2.db}
+      SERVER_HOST: ${SERVER_HOST:-0.0.0.0}
+      SERVER_PORT: ${SERVER_PORT:-9888}
+      SMTP: ${SMTP}
+      sender: ${sender}
+      V_API_BASE_URL: ${V_API_BASE_URL}
+      V_API_API_KEY: ${V_API_API_KEY}
+      BIANXIE_BASE: ${BIANXIE_BASE}
+      BIANXIE_API_KEY: ${BIANXIE_API_KEY}
+      TOS_BUCKET: ${TOS_BUCKET}
+      TOS_AK: ${TOS_AK}
+      TOS_SK: ${TOS_SK}
+      TOS_ENDPOINT: ${TOS_ENDPOINT}
+      TOS_REGION: ${TOS_REGION}
+    env_file:
+      - .env
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: always
+    networks:
+      - webnet
+
+  mysql:
+    image: mysql:8.0
+    container_name: postpin-mysql-test
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-1234}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-postpin_test}
+      MYSQL_USER: ${MYSQL_USER:-postpin}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-postpin1234}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p${MYSQL_ROOT_PASSWORD:-1234}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: always
+    networks:
+      - webnet
+
+  nginx:
+    build:
+      context: ./deploy/nginx
+      dockerfile: Dockerfile
+    image: ps-plugin-nginx:test
+    container_name: postpin-nginx-test
+    ports:
+      - "7002:7002"
+    depends_on:
+      test:
+        condition: service_started
+    restart: always
+    networks:
+      - webnet
+
+networks:
+  webnet:
+    driver: bridge
+
+volumes:
+  mysql_data:

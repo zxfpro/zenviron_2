@@ -1,0 +1,15 @@
+name = "module-kanban-m"
+version = "0.1.0"
+description = "Reusable full-stack module skill"
+
+[copy]
+strategy = "direct-copy-plus-micro-adjust"
+source = "resources/module"
+
+[integration]
+touchpoints = ["routes", "config_env", "db_migration_entry", "app_bootstrap"]
+
+[quality]
+docs_required = true
+tests_required = true
+e2e_required = true

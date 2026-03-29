@@ -1,0 +1,15 @@
+name = "module-llm-config-manager"
+version = "0.1.0"
+description = "Reusable LLM profile config module skill"
+
+[copy]
+strategy = "direct-copy-plus-micro-adjust"
+source = "resources/module/payload"
+
+[integration]
+touchpoints = ["backend_api", "frontend_routes", "api_proxy", "config_file_path", "sse_stream"]
+
+[quality]
+docs_required = true
+tests_required = true
+e2e_required = true

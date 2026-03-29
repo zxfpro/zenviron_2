@@ -1,0 +1,76 @@
+[meta]
+version = 17
+updated_at = "2026-03-25T14:25:49.050805+00:00"
+active_alias = "33"
+
+[profiles.openai_default]
+provider = "openai"
+enabled = true
+base_url = "https://api.openai.com/v1"
+api_key = ""
+alias = "openai_default"
+model = "gpt-4o-mini-0"
+timeout = 30
+max_tokens = 2048
+temperature = 0.7
+note = ""
+
+[profiles.openai_backup]
+provider = "openai"
+enabled = false
+base_url = "https://api.openai.com/v1"
+api_key = ""
+alias = "openai_backup"
+model = "gpt-4o"
+timeout = 30
+max_tokens = 2048
+temperature = 0.7
+note = ""
+
+[profiles.anthropic_default]
+provider = "anthropic"
+enabled = false
+base_url = "https://api.anthropic.com/v1"
+api_key = ""
+alias = "anthropic_default"
+model = "claude-3-5-sonnet-latest"
+timeout = 30
+max_tokens = 2048
+temperature = 0.7
+note = ""
+
+[profiles.33]
+provider = "openai"
+enabled = true
+base_url = ""
+api_key = ""
+alias = "33"
+model = ""
+timeout = 30
+max_tokens = 2048
+temperature = 0.7
+note = ""
+
+[profiles.44]
+provider = "openai"
+enabled = true
+base_url = ""
+api_key = ""
+alias = "44"
+model = ""
+timeout = 30
+max_tokens = 2048
+temperature = 0.7
+note = ""
+
+[profiles.sdaf]
+provider = "openai"
+enabled = true
+base_url = "https://api.openai.com/v1"
+api_key = ""
+alias = "sdaf"
+model = "gpt-4o-mini"
+timeout = 30
+max_tokens = 2048
+temperature = 0.7
+note = ""

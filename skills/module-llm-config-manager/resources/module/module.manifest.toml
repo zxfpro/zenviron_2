@@ -1,0 +1,25 @@
+name = "module-llm-config-manager"
+version = "0.1.0"
+owner = "llm_manager_m"
+description = "Alias-based LLM profile config manager module"
+
+[compatibility]
+project_types = ["monorepo", "fullstack"]
+backend = ["python-fastapi"]
+frontend = ["react-vite"]
+database = ["none"]
+
+[requirements]
+env = ["LLM_CONFIG_PATH(optional)"]
+services = ["none"]
+
+[integration]
+entrypoints = [
+  "backend: mount apps/backend/src/main.py as config service",
+  "frontend: mount ModelHubPage and ModelSwitch(ApiKeysPage) routes",
+  "proxy: route /api/* from frontend to backend",
+]
+
+[migrations]
+order = ["none"]
+rollback = "restore config/llm_providers.toml backup"

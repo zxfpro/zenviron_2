@@ -1,0 +1,18 @@
+[project]
+name = "llm-manager-m"
+version = "0.1.0"
+description = "AI-ready monorepo project"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "pytest>=8.0.0",
+  "fastapi>=0.115.0",
+  "httpx>=0.28.0",
+  "pydantic>=2.9.0",
+  "tomli-w>=1.1.0",
+  "uvicorn>=0.31.0",
+  "watchdog>=5.0.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

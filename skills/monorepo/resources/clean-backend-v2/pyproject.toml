@@ -1,0 +1,31 @@
+[project]
+name = "ps-plugin-backend"
+version = "0.1.0"
+description = "FastAPI + SQLAdmin backend"
+requires-python = ">=3.10"
+dependencies = [
+  "fastapi",
+  "uvicorn",
+  "sqlmodel",
+  "sqlalchemy",
+  "pymysql",
+  "fastapi-users",
+  "fastapi-users-db-sqlmodel",
+  "sqladmin",
+  "python-multipart",
+  "itsdangerous",
+  "pytest>=9.0.2",
+  "httpx>=0.28.1",
+  "dotenv>=0.9.9",
+  "colorlog>=6.10.1",
+  "requests>=2.32.5",
+  "tos>=2.9.0",
+  "pydantic-settings==2.1.0",
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest",
+  "pytest-asyncio",
+  "httpx",
+]

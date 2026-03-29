@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Architectural Canvas Prototype</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    
+    <!-- Scripts -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/history@5/umd/history.development.js"></script>
+    <script src="https://unpkg.com/react-router@6.3.0/umd/react-router.development.js"></script>
+    <script src="https://unpkg.com/react-router-dom@6.3.0/umd/react-router-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface": "#f7f9fb",
+              "on-primary": "#f8f7ff",
+              "on-error": "#fff7f6",
+              "on-tertiary-container": "#4a2c00",
+              "outline": "#717c82",
+              "secondary-container": "#d3e4fe",
+              "secondary-dim": "#44546a",
+              "inverse-surface": "#0b0f10",
+              "on-secondary-container": "#435368",
+              "primary": "#0053db",
+              "surface-container-highest": "#d9e4ea",
+              "surface-container-high": "#e1e9ee",
+              "on-secondary": "#f7f9ff",
+              "on-background": "#2a3439",
+              "surface-variant": "#d9e4ea",
+              "surface-container-low": "#f0f4f7",
+              "surface-dim": "#cfdce3",
+              "tertiary-container": "#f8a010",
+              "tertiary": "#865400",
+              "on-surface": "#2a3439",
+              "primary-container": "#dbe1ff",
+              "on-secondary-fixed-variant": "#4d5d73",
+              "on-surface-variant": "#566166",
+              "on-primary-fixed": "#003798",
+              "primary-fixed": "#dbe1ff",
+              "secondary-fixed-dim": "#c5d6f0",
+              "on-tertiary-fixed": "#2a1700",
+              "secondary-fixed": "#d3e4fe",
+              "surface-bright": "#f7f9fb",
+              "on-tertiary": "#fff7f3",
+              "error": "#9f403d",
+              "secondary": "#506076",
+              "on-secondary-fixed": "#314055",
+              "background": "#f7f9fb",
+              "surface-container-lowest": "#ffffff",
+              "error-container": "#fe8983",
+              "on-primary-container": "#0048bf",
+              "tertiary-fixed-dim": "#e79400",
+              "on-primary-fixed-variant": "#0050d4",
+              "tertiary-dim": "#764900",
+              "surface-tint": "#0053db",
+              "on-tertiary-fixed-variant": "#563400",
+              "primary-fixed-dim": "#c7d3ff",
+              "on-error-container": "#752121",
+              "inverse-primary": "#618bff",
+              "surface-container": "#e8eff3",
+              "outline-variant": "#a9b4b9",
+              "error-dim": "#4e0309",
+              "primary-dim": "#0048c1",
+              "tertiary-fixed": "#f8a010",
+              "inverse-on-surface": "#9a9d9f"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"],
+              "manrope": ["Manrope"],
+              "inter": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d9e4ea;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a9b4b9;
+        }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        .font-body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { createRoot } = ReactDOM;
+        const { MemoryRouter, Routes, Route, Link, useNavigate, useLocation } = ReactRouterDOM;
+
+        // --- Shared Components ---
+
+        const TopNavBar = () => {
+            const navigate = useNavigate();
+            return (
+                <header class="fixed top-0 w-full z-50 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-xl flex items-center justify-between px-6 h-16 shadow-none border-b border-slate-100 dark:border-slate-800">
+                    <div class="flex items-center gap-8">
+                        <Link to="/" class="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100 font-headline">Architectural Canvas</Link>
+                        <div class="hidden md:flex items-center gap-6">
+                            <nav class="flex items-center gap-6 font-manrope text-sm font-medium">
+                                <Link to="/" class="text-blue-600 dark:text-blue-400 font-semibold transition-colors">Workspace</Link>
+                                <Link to="/team" class="text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors px-2 py-1 rounded">Analytics</Link>
+                                <a class="text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors px-2 py-1 rounded" href="#">Documents</a>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="relative hidden sm:block">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
+                            <input class="bg-surface-container-high border-none rounded-sm pl-10 pr-4 py-1.5 text-sm w-64 focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search tasks..." type="text"/>
+                        </div>
+                        <button class="p-2 text-on-surface-variant hover:bg-slate-200/50 rounded-full transition-colors active:scale-95 duration-200">
+                            <span class="material-symbols-outlined">notifications</span>
+                        </button>
+                        <Link to="/settings" class="h-8 w-8 rounded-full overflow-hidden border border-surface-container-highest block hover:opacity-80 transition-opacity">
+                            <img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsKB9EL3AQbIqbjFvVhb7y4Xl2er3oMgEEcb19mdHnYMJe8BIGtgh0ic_-fWSkYz4_L6s_cKJ8UDA173NwbgpUsu2u-bDLKc1cr-KKryyisTgIXPwlSZn6mBVNFLyIaa325kf6a-ZKKs8EtSXdaFbgN_cmkVJ5Z1F3qKpHkme9vcpsuDmydN-3_5mdoEMsPCYFSiiDkt540c6QFFZ-RwCcmfK3w7js3woVBtwtxf8uJYHix-DCh4JdoFd0rsdzcmZ2RZSvsXTAjA"/>
+                        </Link>
+                    </div>
+                </header>
+            );
+        };
+
+        const SideNavBar = () => {
+            const location = useLocation();
+            const path = location.pathname;
+
+            const navItemClass = (itemPath) => `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all active:translate-x-1 duration-150 ${
+                path === itemPath 
+                ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 font-semibold' 
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+            }`;
+
+            return (
+                <aside class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 bg-slate-50 dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800 flex flex-col p-4 gap-2 font-inter text-sm font-medium hidden lg:flex">
+                    <div class="flex items-center gap-3 px-2 py-4 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary">
+                            <span class="material-symbols-outlined">architecture</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-on-surface leading-tight">Project Alpha</p>
+                            <p class="text-xs text-on-surface-variant">Main Workspace</p>
+                        </div>
+                    </div>
+                    <Link to="/" class={navItemClass('/')}>
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <span>My Boards</span>
+                    </Link>
+                    <Link to="/team" class={navItemClass('/team')}>
+                        <span class="material-symbols-outlined">group</span>
+                        <span>Team View</span>
+                    </Link>
+                    <Link to="/archive" class={navItemClass('/archive')}>
+                        <span class="material-symbols-outlined">archive</span>
+                        <span>Archive</span>
+                    </Link>
+                    <Link to="/settings" class={navItemClass('/settings')}>
+                        <span class="material-symbols-outlined">settings</span>
+                        <span>Settings</span>
+                    </Link>
+                    <div class="mt-auto">
+                        <button class="w-full flex items-center justify-center gap-2 bg-primary text-on-primary py-2.5 rounded-xl font-bold hover:bg-primary-dim transition-colors shadow-sm">
+                            <span class="material-symbols-outlined text-sm">add</span>
+                            New Project
+                        </button>
+                    </div>
+                </aside>
+            );
+        };
+
+        const MobileNav = () => {
+            const location = useLocation();
+            const path = location.pathname;
+            const activeClass = "flex flex-col items-center justify-center text-[#0053db] font-bold bg-[#0053db]/5 rounded-xl px-4 py-1 group";
+            const inactiveClass = "flex flex-col items-center justify-center text-[#566166] group";
+
+            return (
+                <nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 pb-safe bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-t border-[#a9b4b9]/15 z-50 shadow-[0px_-4px_16px_rgba(42,52,57,0.04)]">
+                    <Link to="/" class={path === '/' ? activeClass : inactiveClass}>
+                        <span class="material-symbols-outlined group-active:scale-90 transition-transform">dashboard</span>
+                        <span class="text-[10px] uppercase tracking-wider font-inter mt-1">Board</span>
+                    </Link>
+                    <Link to="/archive" class={path === '/archive' ? activeClass : inactiveClass}>
+                        <span class="material-symbols-outlined group-active:scale-90 transition-transform">archive</span>
+                        <span class="text-[10px] uppercase tracking-wider font-inter mt-1">Archive</span>
+                    </Link>
+                    <Link to="/team" class={path === '/team' ? activeClass : inactiveClass}>
+                        <span class="material-symbols-outlined group-active:scale-90 transition-transform">group</span>
+                        <span class="text-[10px] uppercase tracking-wider font-inter mt-1">Team</span>
+                    </Link>
+                    <Link to="/settings" class={path === '/settings' ? activeClass : inactiveClass}>
+                        <span class="material-symbols-outlined group-active:scale-90 transition-transform">menu</span>
+                        <span class="text-[10px] uppercase tracking-wider font-inter mt-1">Menu</span>
+                    </Link>
+                </nav>
+            );
+        }
+
+        // --- Screen 1: Dashboard / Kanban ---
+        const DashboardPage = () => {
+            return (
+                <div class="flex-1 lg:ml-64 pt-16 h-screen flex flex-col overflow-hidden">
+                    <div class="px-8 py-6 flex items-center justify-between">
+                        <div>
+                            <h1 class="text-3xl font-extrabold font-headline text-on-surface tracking-tight">Development Sprint 24</h1>
+                            <p class="text-on-surface-variant text-sm mt-1">Operational pipeline for the Q3 architectural refresh.</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button class="flex items-center gap-2 px-4 py-2 bg-surface-container-high text-on-surface rounded-lg text-sm font-semibold hover:bg-surface-container-highest transition-colors">
+                                <span class="material-symbols-outlined text-lg">filter_list</span>
+                                Filter
+                            </button>
+                            <button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-semibold hover:bg-primary-dim transition-all active:scale-95 shadow-sm">
+                                <span class="material-symbols-outlined text-lg">add</span>
+                                Add Pool
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex-1 overflow-x-auto overflow-y-hidden px-8 pb-8 flex gap-6">
+                        {/* Column 1: Backlog */}
+                        <div class="flex-none w-80 flex flex-col h-full bg-surface-container-low rounded-xl p-3">
+                            <div class="flex items-center justify-between mb-4 px-1">
+                                <div class="flex items-center gap-2">
+                                    <h2 class="font-headline font-bold text-on-surface">Backlog (预备池)</h2>
+                                    <span class="px-2 py-0.5 bg-surface-container-highest rounded-full text-xs font-bold text-on-surface-variant">12</span>
+                                </div>
+                                <button class="text-on-surface-variant hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined">add_circle</span>
+                                </button>
+                            </div>
+                            <div class="flex-1 overflow-y-auto space-y-4 pr-1">
+                                <div class="bg-surface-container-lowest p-4 rounded-xl shadow-none hover:bg-surface-bright transition-all group cursor-grab active:cursor-grabbing border border-transparent hover:border-primary/5">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-secondary-container text-on-secondary-container">Normal</span>
+                                        <span class="text-[11px] font-mono text-on-surface-variant">#ART-102</span>
+                                    </div>
+                                    <h3 class="text-sm font-bold text-on-surface mb-2 leading-snug">Implement WebGL layer for 3D floorplan previews</h3>
+                                    <p class="text-xs text-on-surface-variant line-clamp-2 mb-4 leading-relaxed">Research performance benchmarks for React Three Fiber on mobile devices.</p>
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex -space-x-2">
+                                            <img class="w-6 h-6 rounded-full border-2 border-surface-container-lowest object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuUp2eB3daBiYo5G1UgQwOYVzKcx1sGzUfS_4ttF33_4TFBq3ZzU_FwuExfkjpal-qriZtiifR5PtyoN_N2HTGKTDktAi23AwI9LdJP7qjy6dF10vZjdcerXLeQ0QK1uwerfQfHI47za_YFthEYr2zLZICHOIQr0rl5eWHy_gd4Uz17P6AakBiU-DUoYY0H4XQoX76GT7FuFV7l8PQze-tu0xvn-ZfIYXOD3BwY3w9y6fCDua9oUhzZiYAo3GnEw7gW8g7jHMPKZA"/>
+                                        </div>
+                                        <span class="text-[10px] text-on-surface-variant font-medium">Oct 12</span>
+                                    </div>
+                                </div>
+                                <div class="bg-surface-container-lowest p-4 rounded-xl shadow-none hover:bg-surface-bright transition-all group cursor-grab">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-tertiary-container text-on-tertiary-container">Urgent</span>
+                                        <span class="text-[11px] font-mono text-on-surface-variant">#ART-105</span>
+                                    </div>
+                                    <h3 class="text-sm font-bold text-on-surface mb-2 leading-snug">Legacy database migration script verification</h3>
+                                    <div class="flex items-center justify-between mt-4">
+                                        <div class="flex -space-x-2">
+                                            <img class="w-6 h-6 rounded-full border-2 border-surface-container-lowest object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrNgVLNUb9zaADdP8NzrNtw_moHBAnVXQs2XffWsVTYFBgfm67Qu7YpeSLMRY5xUTFaC6bqJ5wOrPvPGjuxw0eYiSlzqP4qVaNVRw7w1hlBFABrpSSS4hKn51W35GSacopkbLHDc6wukVjHEpiVEoIOI72NlYM2EF_lvo7eZbegn7uYSQCxH0_M5zCUsWBFgWnirG2PEHE25SgRL2Vm6UwVLrFIWjpBRhZTP-rHEFwci4Thr9p9Nj_Jt34SvowvFTpqFmrH9wwQA"/>
+                                        </div>
+                                        <span class="text-[10px] text-on-surface-variant font-medium">Oct 14</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {/* Column 2: Ready */}
+                        <div class="flex-none w-80 flex flex-col h-full bg-surface-container-low rounded-xl p-3">
+                            <div class="flex items-center justify-between mb-4 px-1">
+                                <div class="flex items-center gap-2">
+                                    <h2 class="font-headline font-bold text-on-surface">Ready (就绪池)</h2>
+                                    <span class="px-2 py-0.5 bg-surface-container-highest rounded-full text-xs font-bold text-on-surface-variant">4</span>
+                                </div>
+                                <button class="text-on-surface-variant hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined">add_circle</span>
+                                </button>
+                            </div>
+                            <div class="flex-1 overflow-y-auto space-y-4 pr-1">
+                                <div class="bg-surface-container-lowest p-4 rounded-xl shadow-none hover:bg-surface-bright transition-all group cursor-grab">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary-container text-on-primary-container">High</span>
+                                        <span class="text-[11px] font-mono text-on-surface-variant">#ART-098</span>
+                                    </div>
+                                    <h3 class="text-sm font-bold text-on-surface mb-2 leading-snug">Redesign authentication flow with magic links</h3>
+                                    <div class="flex items-center justify-between mt-4">
+                                        <div class="flex -space-x-2">
+                                            <div class="w-6 h-6 rounded-full bg-surface-container-highest border-2 border-surface-container-lowest flex items-center justify-center text-[10px] font-bold">JD</div>
+                                        </div>
+                                        <span class="text-[10px] text-on-surface-variant font-medium">Oct 11</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {/* Column 3: Doing */}
+                        <div class="flex-none w-80 flex flex-col h-full bg-surface-container-low rounded-xl p-3">
+                            <div class="flex items-center justify-between mb-4 px-1">
+                                <div class="flex items-center gap-2">
+                                    <h2 class="font-headline font-bold text-on-surface">Doing (执行池)</h2>
+                                    <span class="px-2 py-0.5 bg-surface-container-highest rounded-full text-xs font-bold text-on-surface-variant">2</span>
+                                </div>
+                                <button class="text-on-surface-variant hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined">add_circle</span>
+                                </button>
+                            </div>
+                            <div class="flex-1 overflow-y-auto space-y-4 pr-1">
+                                <div class="bg-surface-container-lowest p-4 rounded-xl shadow-none hover:bg-surface-bright transition-all border-l-4 border-primary">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-tertiary-container text-on-tertiary-container">Urgent</span>
+                                        <span class="text-[11px] font-mono text-on-surface-variant">#ART-082</span>
+                                    </div>
+                                    <h3 class="text-sm font-bold text-on-surface mb-2 leading-snug">API Rate limiting implementation for Public SDK</h3>
+                                    <p class="text-xs text-on-surface-variant mb-4 leading-relaxed">Handling peak load during beta launch.</p>
+                                    <div class="flex items-center justify-between">
+                                        <img class="w-6 h-6 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmWSDX2ZOzNuciiGwXKjFSz47rnPGOSZ2p61LLnyIxz25sjeqwbM9JZQL-sqDSgugBAhO1uK_W4SiHrGdTvVb_gIoMFXhvWdedqM8sTJQs1V-N9dUqUo-4MLvovdXcPybtgAB_VXrnPtTeYI4myJLuHCIqUxuE6UQ6Z2BKgCBh2nQHTqRy80k2KrcnAEKHVcDV_8E93shkeSRaq9Pgfilqqz6qaIadTvTtVa0teEThw7MFFNDN3BG5CfFXF59itI_KdXmA0MIU3w"/>
+                                        <div class="flex items-center gap-1.5 text-primary">
+                                            <span class="material-symbols-outlined text-sm" style={{fontVariationSettings: "'FILL' 1"}}>sync</span>
+                                            <span class="text-[10px] font-bold">ACTIVE</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/* FAB */}
+                    <div class="fixed bottom-8 right-8 z-50 md:bottom-12 md:right-12">
+                        <button class="h-14 w-14 rounded-full bg-primary text-on-primary shadow-xl hover:shadow-2xl transition-all active:scale-90 flex items-center justify-center group overflow-hidden">
+                            <span class="material-symbols-outlined text-2xl group-hover:rotate-90 transition-transform">add</span>
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- Screen 2: Archive ---
+        const ArchivePage = () => {
+            return (
+                <div class="flex-1 lg:ml-64 pt-16 h-screen flex flex-col bg-surface overflow-hidden">
+                    <div class="flex-1 overflow-y-auto px-8 pb-12 pt-6">
+                        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+                            <div>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-primary">auto_awesome_motion</span>
+                                    <span class="text-xs font-bold tracking-widest uppercase text-primary">Storage Repository</span>
+                                </div>
+                                <h2 class="text-4xl font-extrabold font-manrope text-on-background leading-tight">Project Archive</h2>
+                                <p class="text-on-surface-variant mt-2 max-w-xl">Review and manage historical tasks.</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="flex p-1 bg-surface-container rounded-lg">
+                                    <button class="px-4 py-2 bg-surface-container-lowest shadow-sm rounded-md text-sm font-semibold text-on-surface">List View</button>
+                                    <button class="px-4 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface">Grid View</button>
+                                </div>
+                                <button class="flex items-center gap-2 px-4 py-2.5 bg-surface-container-high rounded-lg text-sm font-semibold hover:bg-surface-container-highest transition-colors">
+                                    <span class="material-symbols-outlined text-lg">filter_list</span>
+                                    Filter
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Bento Stats */}
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                            <div class="bg-surface-container-low p-5 rounded-xl flex flex-col justify-between h-32">
+                                <span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Total Archived</span>
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-3xl font-manrope font-extrabold">1,284</span>
+                                    <span class="text-xs text-primary font-bold">+12%</span>
+                                </div>
+                            </div>
+                            <div class="bg-surface-container-low p-5 rounded-xl flex flex-col justify-between h-32">
+                                <span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Storage Used</span>
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-3xl font-manrope font-extrabold">4.2 GB</span>
+                                    <span class="text-xs text-on-surface-variant font-medium">of 10GB</span>
+                                </div>
+                            </div>
+                            <div class="md:col-span-2 bg-primary-container/30 p-5 rounded-xl flex items-center justify-between">
+                                <div class="space-y-1">
+                                    <h3 class="font-manrope font-bold text-on-primary-container">Smart Cleanup</h3>
+                                    <p class="text-sm text-on-primary-container/80">Optimizing 244 legacy tasks.</p>
+                                </div>
+                                <button class="bg-primary text-on-primary px-4 py-2 rounded-lg text-sm font-bold shadow-md">Settings</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-surface-container-low">
+                                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-on-surface-variant">Task Identity</th>
+                                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-on-surface-variant">Project</th>
+                                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-on-surface-variant">Performer</th>
+                                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-on-surface-variant text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-outline-variant/10">
+                                    <tr class="hover:bg-surface-bright transition-colors group">
+                                        <td class="px-6 py-5">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-2 h-2 rounded-full bg-secondary"></div>
+                                                <div>
+                                                    <p class="font-bold text-on-surface group-hover:text-primary transition-colors">Design System Audit: Typography</p>
+                                                    <p class="text-xs text-on-surface-variant">T-2401 • Component Library</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-5">
+                                            <span class="px-3 py-1 bg-tertiary-container/10 text-on-tertiary-container text-[10px] font-bold uppercase tracking-widest rounded-full">Foundation</span>
+                                        </td>
+                                        <td class="px-6 py-5">
+                                            <div class="flex items-center gap-2">
+                                                <img class="w-6 h-6 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiGslwtT4pnPbD5wCsboBhCx2ZdzzlEOQn1sviQw-FvVlyNFJrYE3_ewNrcizGTGgNW_U2CyCAD5tNIXpGDQCdV4dBBqoz25HSZKD1yXA-83kzWzOZdePBv9_fweTeYwYbndP4p8CmVixPvLDk-LL58RnZpcvmiTIhNL3OGMfEfZrtfrIogaNn1pRvClDS_rP_vyIMRbycVD3eeTQNArBkNx6DHparPkWjNt-iSvNVLUyqBFueaKX_Vck5BFS2v5MyTAkl6r13Pw"/>
+                                                <span class="text-sm font-medium">Marco Rossi</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-5 text-right">
+                                            <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button class="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant"><span class="material-symbols-outlined text-xl">visibility</span></button>
+                                                <button class="p-2 hover:bg-surface-container-high rounded-lg text-primary"><span class="material-symbols-outlined text-xl">settings_backup_restore</span></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-surface-bright transition-colors group">
+                                        <td class="px-6 py-5">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-2 h-2 rounded-full bg-primary"></div>
+                                                <div>
+                                                    <p class="font-bold text-on-surface group-hover:text-primary transition-colors">Q3 Stakeholder Deck: Final</p>
+                                                    <p class="text-xs text-on-surface-variant">T-2210 • Management</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-5">
+                                            <span class="px-3 py-1 bg-primary-container/10 text-on-primary-container text-[10px] font-bold uppercase tracking-widest rounded-full">Reporting</span>
+                                        </td>
+                                        <td class="px-6 py-5">
+                                            <div class="flex items-center gap-2">
+                                                <img class="w-6 h-6 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXxZF8V2xg3WNm-Itl4XDNZd8JCcnL4p13Us4TbSddCYj3HCZI476cQ9oTpN78LWVPs6y9PFH8cKoBZLEOcOnfFY5N1wzNiGXjYusE72XjH29hdbMCf_S4io3mGJjIr3HHL4da1o-Ph32iyq5MOoJxlqxpvoFS8FhFAAYnIVzSH-4swjJTQL2aibORxH65UuuviJ6cxwmEMbCp_RH2vUI0oI4hovkAfnCCvb_ayF1KLZa16GHdMfEFr-uNdb0KTokxbdbpQ7Iqfw"/>
+                                                <span class="text-sm font-medium">James Wilson</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-5 text-right">
+                                            <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button class="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant"><span class="material-symbols-outlined text-xl">visibility</span></button>
+                                                <button class="p-2 hover:bg-surface-container-high rounded-lg text-primary"><span class="material-symbols-outlined text-xl">settings_backup_restore</span></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- Screen 3: Settings ---
+        const SettingsPage = () => {
+            return (
+                <div class="flex-1 lg:ml-64 pt-16 h-screen flex flex-col overflow-y-auto">
+                    <main class="p-10 max-w-5xl mx-auto w-full">
+                        <header class="mb-12">
+                            <h1 class="text-4xl font-extrabold font-headline tracking-tight text-on-surface mb-2">Workspace Settings</h1>
+                            <p class="text-on-surface-variant text-lg">Manage team environment and preferences.</p>
+                        </header>
+                        <div class="space-y-16">
+                            <section class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                <div>
+                                    <h3 class="text-xl font-bold font-headline mb-2">Profile Settings</h3>
+                                    <p class="text-sm text-on-surface-variant">Visible to all members.</p>
+                                </div>
+                                <div class="md:col-span-2 space-y-6">
+                                    <div class="flex items-center gap-6 mb-4">
+                                        <div class="relative group">
+                                            <img class="w-24 h-24 rounded-xl object-cover ring-4 ring-surface-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZx7T_q4T6Jt5rU1f6SyRnbF4khDxPcx04i_RbfAEJwQDv8YYUKsC8kf9LZ7VgnxqhkwktLJq-dBzQBq22_FO4WdV9WYgT0mk83zMrL3PElVZ3aUTj4akXSWqQOHqlUakopbFhNUfnIdMSsgtIsfaQTsLmDq8osik-4p63R9bqUS9AalS9kNBmvXG5NmREVILQeFDOSkrRfdUdC8kItzKgsQcG5KnW7c3kaRqTiU4bYRP7JxtY2lIAiaFhThhoutbnXGob2lkXvw"/>
+                                            <button class="absolute -bottom-2 -right-2 bg-primary text-white p-2 rounded-lg shadow-lg hover:scale-105 transition-transform">
+                                                <span class="material-symbols-outlined text-sm">edit</span>
+                                            </button>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <h4 class="font-semibold text-on-surface">Avatar Image</h4>
+                                            <p class="text-xs text-on-surface-variant">JPG or PNG</p>
+                                            <div class="flex gap-2 mt-2">
+                                                <button class="text-xs font-semibold px-3 py-1.5 rounded bg-surface-container-high hover:bg-surface-container-highest transition-colors">Upload new</button>
+                                                <button class="text-xs font-semibold px-3 py-1.5 rounded text-error hover:bg-error/5 transition-colors">Remove</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="space-y-2">
+                                            <label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Full Name</label>
+                                            <input class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 transition-all" type="text" defaultValue="Elena Rossi"/>
+                                        </div>
+                                        <div class="space-y-2">
+                                            <label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Email Address</label>
+                                            <input class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 transition-all" type="email" defaultValue="elena@linearis.io"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <div class="h-px bg-surface-container-highest w-full"></div>
+                            <section class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                <div>
+                                    <h3 class="text-xl font-bold font-headline mb-2">Workspace Configuration</h3>
+                                    <p class="text-sm text-on-surface-variant">Global visual preferences.</p>
+                                </div>
+                                <div class="md:col-span-2 space-y-6">
+                                    <div class="space-y-3">
+                                        <label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Visual Theme</label>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <label class="relative cursor-pointer group">
+                                                <input checked="" class="peer sr-only" name="theme" type="radio" value="light"/>
+                                                <div class="p-4 rounded-xl bg-surface-container-lowest border-2 border-transparent peer-checked:border-primary peer-checked:bg-primary/5 transition-all flex flex-col items-center gap-3">
+                                                    <span class="material-symbols-outlined text-3xl text-on-surface-variant peer-checked:text-primary">light_mode</span>
+                                                    <span class="font-semibold text-sm">Light Mode</span>
+                                                </div>
+                                            </label>
+                                            <label class="relative cursor-pointer group">
+                                                <input class="peer sr-only" name="theme" type="radio" value="dark"/>
+                                                <div class="p-4 rounded-xl bg-surface-container-lowest border-2 border-transparent peer-checked:border-primary peer-checked:bg-primary/5 transition-all flex flex-col items-center gap-3">
+                                                    <span class="material-symbols-outlined text-3xl text-on-surface-variant peer-checked:text-primary">dark_mode</span>
+                                                    <span class="font-semibold text-sm">Dark Mode</span>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <footer class="pt-8 border-t border-surface-container-highest flex justify-end gap-4">
+                                <button class="px-6 py-2.5 rounded-xl font-semibold text-on-surface-variant hover:bg-surface-container-high transition-colors">Discard Changes</button>
+                                <button class="px-8 py-2.5 rounded-xl font-semibold bg-primary text-white shadow-lg shadow-primary/20 hover:translate-y-[-2px] transition-all">Save Settings</button>
+                            </footer>
+                        </div>
+                    </main>
+                </div>
+            );
+        };
+
+        // --- Screen 4: Team View ---
+        const TeamPage = () => {
+            return (
+                <div class="flex-1 lg:ml-64 pt-16 h-screen flex flex-col overflow-y-auto bg-surface">
+                    <div class="p-8 max-w-7xl mx-auto w-full space-y-12">
+                        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                            <div>
+                                <h2 class="text-4xl font-extrabold tracking-tight text-on-surface font-headline mb-2">Team Availability & Performance</h2>
+                                <p class="text-on-surface-variant font-medium">Real-time resource allocation and velocity overview.</p>
+                            </div>
+                            <div class="flex gap-3">
+                                <div class="flex -space-x-3">
+                                    <img alt="Team member" class="w-10 h-10 rounded-full border-2 border-surface object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHZVYuXBTmipdJ_AlR0UAwqma7_6lQpNZNJWx2gJNIQoJYBrGDCCdMO7d-icVU0S_agAtXLwNmmzgQau91kpePlaF2vsKQJectCv2sRoPlGLP13ZV6TwgSCUz9jChGLkdccQoA460AJnq54tCgRyO5RoGDrFhYDR0F0xTEoxv0s_JTabnWk20L63TLbzgmDpM8R9Xq2xXS5DAarLfk617kPfOzt_PpI05Br-aiIMeIyXshGIP4OLuUaTraL3g1VGD6iD40FD16NQ"/>
+                                    <img alt="Team member" class="w-10 h-10 rounded-full border-2 border-surface object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmfuV-EPUaYJnVVZTDZ6q3mnA3sKPYvCDgPWCXoJQ35m6AQOswWVaforZnhWqatjcb4kROsI9QKVhgYyJzorKg5c9pyvvbdnGF6xqhRWufOaCG42ldsU-ZpGGQXZZ8QshbY8bVaT6pUb0oiFhdDkI5YkZqm8JarJxu155RngJxk4Xnk6bEwQBO00-uDv324s-s5ABUDQAgnB-0-O5xbXHah5CkRYWC8ujZi0KxrEk9IFMxAbO0FDozhtNBFXLAUHahJDQET3W3Dw"/>
+                                    <div class="w-10 h-10 rounded-full border-2 border-surface bg-surface-container-highest flex items-center justify-center text-xs font-bold text-on-surface-variant">+8</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <div class="lg:col-span-2 space-y-6">
+                                <div class="bg-surface-container-low p-6 rounded-xl">
+                                    <div class="flex items-center justify-between mb-8">
+                                        <h3 class="text-lg font-bold font-headline">Workload Distribution</h3>
+                                        <span class="text-xs font-bold text-primary uppercase tracking-wider">Across 6 Pools</span>
+                                    </div>
+                                    <div class="space-y-6">
+                                        <div class="space-y-2">
+                                            <div class="flex justify-between text-sm">
+                                                <span class="font-semibold text-on-surface">Doing</span>
+                                                <span class="text-on-surface-variant">5 Tasks</span>
+                                            </div>
+                                            <div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+                                                <div class="h-full bg-primary rounded-full" style={{width: '60%'}}></div>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-2">
+                                            <div class="flex justify-between text-sm">
+                                                <span class="font-semibold text-on-surface">Blocked</span>
+                                                <span class="text-on-surface-variant">2 Tasks</span>
+                                            </div>
+                                            <div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+                                                <div class="h-full bg-error rounded-full" style={{width: '15%'}}></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="bg-surface-container-lowest p-5 rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-on-surface/5 group border border-slate-100">
+                                        <div class="flex items-start justify-between mb-4">
+                                            <div class="flex items-center gap-3">
+                                                <div class="relative">
+                                                    <img class="w-12 h-12 rounded-xl object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhpezaK4-9cj5blUjIPlWTZdYrVVnBS8QrlCrNLlmox84xbnkFcHOyBOiyH2jvFLvqGGd0KKTM_lSpg6jb2i4U8SCJS92DuJLlwoYFz3a3PIX9k5sePxtDi3MSk7pzQAM-p_73h4wXeOm7u5OivSb_oCJZT_fDiZ0w8vtWI2BfD_DuLNcULS-fj1tGgg39LoCjN0ydfw40ieOO40PzoMD_ShbLwm-41cwv1zxrn_wUcxB7hYRQx-08Ie6YWRiV7OdHbZc97PttJg"/>
+                                                    <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-surface bg-primary" title="Active"></span>
+                                                </div>
+                                                <div>
+                                                    <h4 class="font-bold text-on-surface">Alex Rivers</h4>
+                                                    <span class="text-xs font-bold text-primary uppercase">Active</span>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-xl font-black text-on-surface">14</div>
+                                                <div class="text-[10px] font-bold text-on-surface-variant uppercase">Done</div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-surface-container rounded-lg p-3">
+                                            <p class="text-sm font-semibold text-on-surface line-clamp-1">Refactor API Middleware</p>
+                                        </div>
+                                    </div>
+                                    <div class="bg-surface-container-lowest p-5 rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-on-surface/5 group border border-slate-100">
+                                        <div class="flex items-start justify-between mb-4">
+                                            <div class="flex items-center gap-3">
+                                                <div class="relative">
+                                                    <img class="w-12 h-12 rounded-xl object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaBTmo-u25nX00BPHLD1mPYHDTk0meqfxHOI59NheG63ghSLfmSJ3nuLpPnrx9lOCHRRhdB10pgg8LZRNQqv7G03Ew7U2VNRUbS-F76uZyU8Sq32wVTUBVxZZhU7mmfBAuH935AD8itW9CbSJ2dVIX0hW3sO2Ax4DIkOJ-s2YKFKSzGKCwc06GEP5Uq-CDlK6oKfKmQWKA5NLjfJVy0MHC_56DD_hyuvGi2hh6TEqmJI58SO0a3Zrwqsl3KSaerewz4_8tufXVTw"/>
+                                                    <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-surface bg-tertiary" title="Meeting"></span>
+                                                </div>
+                                                <div>
+                                                    <h4 class="font-bold text-on-surface">Sarah Chen</h4>
+                                                    <span class="text-xs font-bold text-tertiary uppercase">In Meeting</span>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-xl font-black text-on-surface">9</div>
+                                                <div class="text-[10px] font-bold text-on-surface-variant uppercase">Done</div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-surface-container rounded-lg p-3">
+                                            <p class="text-sm font-semibold text-on-surface line-clamp-1">Design System Audit</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-1 space-y-6">
+                                <div class="bg-surface-container-low p-6 rounded-xl h-full flex flex-col">
+                                    <h3 class="text-lg font-bold font-headline mb-6">Recent Activity</h3>
+                                    <div class="flex-1 space-y-8 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-surface-container-highest">
+                                        <div class="relative pl-8">
+                                            <div class="absolute left-0 top-1 w-[24px] h-[24px] bg-primary text-on-primary rounded-full flex items-center justify-center z-10">
+                                                <span class="material-symbols-outlined text-[14px]" style={{fontVariationSettings: "'FILL' 1"}}>check_circle</span>
+                                            </div>
+                                            <div class="space-y-1">
+                                                <p class="text-sm text-on-surface font-medium leading-relaxed">
+                                                    <span class="font-bold">Alex Rivers</span> moved <span class="italic">"Database Migration"</span> to <span class="text-primary font-bold">Done</span>
+                                                </p>
+                                                <span class="text-[10px] font-bold text-on-surface-variant uppercase">12m ago</span>
+                                            </div>
+                                        </div>
+                                        <div class="relative pl-8">
+                                            <div class="absolute left-0 top-1 w-[24px] h-[24px] bg-error-container text-on-error-container rounded-full flex items-center justify-center z-10">
+                                                <span class="material-symbols-outlined text-[14px]" style={{fontVariationSettings: "'FILL' 1"}}>report</span>
+                                            </div>
+                                            <div class="space-y-1">
+                                                <p class="text-sm text-on-surface font-medium leading-relaxed">
+                                                    <span class="font-bold">Marcus Vogt</span> flagged <span class="italic">"Legacy Support"</span> as <span class="text-error font-bold uppercase text-[10px]">Blocked</span>
+                                                </p>
+                                                <span class="text-[10px] font-bold text-on-surface-variant uppercase">2h ago</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="mt-8 w-full py-3 text-sm font-bold text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center gap-2 border border-outline-variant/30 rounded-lg">
+                                        View Full Log
+                                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- App Component ---
+        const App = () => {
+            return (
+                <MemoryRouter>
+                    <div class="min-h-screen bg-surface">
+                        <TopNavBar />
+                        <div class="flex flex-col lg:flex-row min-h-screen">
+                            <SideNavBar />
+                            <Routes>
+                                <Route path="/" element={<DashboardPage />} />
+                                <Route path="/archive" element={<ArchivePage />} />
+                                <Route path="/team" element={<TeamPage />} />
+                                <Route path="/settings" element={<SettingsPage />} />
+                            </Routes>
+                        </div>
+                        <MobileNav />
+                    </div>
+                </MemoryRouter>
+            );
+        };
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
