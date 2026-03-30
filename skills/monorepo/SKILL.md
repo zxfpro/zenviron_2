@@ -1,12 +1,12 @@
 ---
 name: monorepo
 description: Bootstrap an AI-ready monorepo project using Zenviron's monorepo template.
-version: 0.2.5
+version: 0.2.6
 ---
 
 # monorepo
 
-Skill Version: `0.2.5`
+Skill Version: `0.2.6`
 
 Use this skill to initialize a new AI-ready monorepo from bundled local resources.
 
@@ -24,11 +24,14 @@ Use this skill to initialize a new AI-ready monorepo from bundled local resource
    - Confirm template mode:
      - `skeleton` (default monorepo scaffold)
      - `clean-backend` (backend-focused scaffold)
+     - `clean-backend-v2` (backend scaffold v2)
+     - `clean-fAIend-v2` (backend-style scaffold variant)
+     - `clean-frontend-v2` (frontend-focused scaffold v2)
 2. Resolve this skill folder path (`$SKILL_DIR`) and use fixed target base:
    - Typical install path: `~/.agents/skills/monorepo`
    - `TARGET_DIR="$HOME/GitHub"`
    - `PROJECT_NAME="<project-name>"`
-   - `MODE="<skeleton|clean-backend>"`
+   - `MODE="<skeleton|clean-backend|clean-backend-v2|clean-fAIend-v2|clean-frontend-v2>"`
 3. Create the project under `~/GitHub`:
    - `mkdir -p "$TARGET_DIR"`
    - `cp -R "$SKILL_DIR/resources/$MODE" "$TARGET_DIR/$PROJECT_NAME"`
