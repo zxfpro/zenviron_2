@@ -1,0 +1,6 @@
+version: 1
+interface:
+  display_name: Project Backend Dev
+  description: Implement backend features safely for this FastAPI project.
+  type: prompt
+  default_prompt: Use this skill to implement backend features in this project with incremental, test-backed changes.

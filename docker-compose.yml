@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # docker buildx build --platform linux/amd64,linux/arm64 -t 823042332/serverz:1.0.1 /Users/zhaoxuefeng/GitHub/serverz --push
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    ports:
+      - "6333:6333" # 将主机8080端口映射到容器的80端口
+    volumes:
+      - $HOME/Documents/SQLDATA/qdrant:/qdrant/data
+
+    restart: always 
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    ports:
+      - "3306:3306" # 将主机8080端口映射到容器的80端口
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+    volumes:
+      - $HOME/Documents/SQLDATA/mysql:/var/lib/mysql
+
+    restart: always # 容器退出或Docker守护进程重启时，总是重新启动容器
+
+  postgres:
+    image: postgres:16-alpine # 使用官方的 PostgreSQL 镜像，推荐使用带有版本号的稳定版本，例如 16-alpine 更轻量
+    container_name: postgres_db # 给容器起一个易于识别的名称
+    environment:
+      POSTGRES_DB: ai # 数据库名称
+      POSTGRES_USER: ai # 数据库用户名
+      POSTGRES_PASSWORD: ai # 数据库密码
+      PGDATA: /var/lib/postgresql/data/pgdata # 指定数据目录，以便将数据持久化到此路径下
+    volumes:
+      - $HOME/Documents/SQLDATA/pgdata:/var/lib/postgresql/data/pgdata
+      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql # (可选) 如果需要初始化数据库，可以挂载一个 SQL 文件
+    ports:
+      - "5532:5432" # 将容器的 5432 端口映射到宿主机的 5432 端口，这样你就可以从本地连接到数据库
+    restart: always # 容器停止后总是重启
+    
+    healthcheck: # (可选) 添加健康检查，确保数据库服务已完全启动
+      test: ["CMD-SHELL", "pg_isready -U myuser -d mydatabase"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  jupyter:
+    build:
+      context: .
+      dockerfile: Dockerfile.jupyter
+    image: jupyter
+    container_name: jupyter
+    environment:
+      - ARK_API_KEY=${ARK_API_KEY}
+      - BIANXIE_API_KEY=${BIANXIE_API_KEY}
+      - BIANXIE_BASE=${BIANXIE_BASE}
+    volumes:
+       - $HOME/notebook:/app
+       - /etc/localtime:/etc/localtime:ro
+       - /etc/timezone:/etc/timezone:ro
+    ports:
+      - "8888-9000:8888-9000" # 将容器的 5432 端口映射到宿主机的 5432 端口，这样你就可以从本地连接到数据库
+    restart: always # 容器退出或Docker守护进程重启时，总是重新启动容器
+
+networks:
+  webnet:
+    driver: bridge
+

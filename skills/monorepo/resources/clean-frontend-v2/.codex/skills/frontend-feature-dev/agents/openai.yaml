@@ -1,0 +1,4 @@
+interface:
+  display_name: "Frontend Feature Dev"
+  short_description: "Implement frontend features with structured layering"
+  default_prompt: "Use this skill when adding or modifying frontend features in clean-frontend-v2."

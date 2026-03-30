@@ -1,0 +1,35 @@
+# FROM python:3.12-slim AS public_builder
+# 可以删掉
+# RUN pip install --no-cache-dir jupyterlab==3.6.0 \
+#                                 -i https://pypi.tuna.tsinghua.edu.cn/simple -i https://mirrors.aliyun.com/pypi/simple/
+
+# # --- 第二阶段：私有工具构建阶段 ---
+# FROM python:3.12-slim AS builder
+# COPY --from=public_builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+
+
+# # --- 第三阶段：最终运行环境 ---
+# FROM python:3.12-slim
+
+# COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+# RUN  apt update && apt install vim curl -y 
+
+
+
+
+FROM python:3.12-slim
+
+# 安装 jupyterlab
+RUN pip install --no-cache-dir jupyterlab==3.6.0 \
+                                -i https://pypi.tuna.tsinghua.edu.cn/simple -i https://mirrors.aliyun.com/pypi/simple/
+
+
+# 设置工作目录
+WORKDIR /app
+
+# 暴露 JupyterLab 默认端口
+EXPOSE 8888
+
+# 启动命令
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=''"]
+
